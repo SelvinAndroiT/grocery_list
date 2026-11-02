@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#296342"><meta name="description" content="A private grocery shopping list with monthly price history, shop records and local backups."><title>Shopping list</title><style>
+:root{color-scheme:light;--bg:#f7f9f5;--paper:#fff;--ink:#233e2e;--muted:#627767;--line:#dbe5d8;--green:#286443;--soft:#eaf2e7;--up:#a6382d;--down:#267344;font-family:Arial,sans-serif;color:var(--ink);background:var(--bg)}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit;color:inherit;min-width:0}button,input,select{border:1px solid var(--line);border-radius:7px;min-height:42px;padding:9px 11px;background:var(--paper)}input,select{width:100%}button{cursor:pointer}button:hover:not(:disabled){background:var(--soft)}button:disabled{opacity:.45;cursor:default}.primary{background:var(--green);color:#fff;border-color:var(--green)}.primary:hover:not(:disabled){background:#1e5033}[hidden]{display:none!important}input[type=number]{appearance:textfield;-moz-appearance:textfield}input::-webkit-inner-spin-button{appearance:none}input[type=checkbox]{width:18px;height:18px;min-height:18px;accent-color:var(--green);margin:0;padding:0;cursor:pointer}:focus-visible{outline:3px solid #71a680;outline-offset:2px}.app{max-width:1000px;margin:auto;padding:26px 24px}h1{font-size:26px;letter-spacing:-.5px;margin:0 0 5px}h2{font-size:17px;font-weight:600;margin:0 0 5px}p{line-height:1.5}.app-header,.section-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}.app-header{margin-bottom:20px}.app-header p{font-size:12px;color:var(--muted);margin:0}.backup-actions,.tabs{display:flex;gap:7px;flex-wrap:wrap}.backup-actions button{font-size:12px;min-height:34px;padding:7px 10px}.tabs{margin-bottom:20px}.tabs button{background:transparent;border-color:transparent;font-size:14px}.tabs button[aria-current=page]{background:var(--green);color:white}label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);min-width:0}label input,label select{font-size:15px;color:var(--ink)}.composer{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:24px}.composer>input{font-size:16px}.add-fields{display:grid;grid-template-columns:minmax(150px,1.4fr) minmax(80px,.7fr) 65px minmax(115px,1fr) 80px;gap:10px;align-items:end;margin-top:11px}.weight-stepper{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;gap:4px}.weight-stepper input{text-align:center;padding:7px 3px}.weight-stepper button{padding:0}.add-fields input,.add-fields select,.add-button{height:42px}.hint{font-size:12px;color:var(--muted);line-height:1.5;margin:7px 0}.suggestions{display:flex;flex-wrap:wrap;gap:6px}.suggestions:not(:empty){margin-top:9px}.suggestions button{font-size:12px;padding:7px 9px;background:var(--soft)}.section-heading{margin-bottom:8px}.section-heading>button{font-size:12px;padding:8px 10px}.cart-item{padding:13px 0;border-bottom:1px solid var(--line)}.cart-top{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:9px;align-items:start}.cart-top>input{margin-top:3px}.cart-product{min-width:0}.name-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.product-name{font-size:15px;font-weight:500;overflow-wrap:anywhere}.checked{text-decoration:line-through;color:var(--muted)}.cart-product small{display:block;font-size:12px;color:var(--muted);margin-top:3px}.edit-item{border:0;background:transparent;color:var(--muted);font-size:11px;padding:0 4px;min-height:24px}.cart-amount{font-size:15px;text-align:right;font-weight:600;max-width:135px;font-variant-numeric:tabular-nums}.cart-controls{display:flex;align-items:center;gap:10px;justify-content:space-between;margin:9px 0 0 27px;max-width:370px}.inline-price{display:flex;flex-direction:row;align-items:center;gap:6px;font-size:12px}.inline-price>span{white-space:nowrap}.inline-price input{width:92px;min-height:36px;height:36px;font-size:14px;padding:7px}.cart-stepper{display:grid;grid-template-columns:34px 38px 34px;border:1px solid var(--line);border-radius:7px;flex-shrink:0;background:var(--paper)}.cart-stepper input,.cart-stepper button{width:100%;height:36px;min-height:36px;padding:0;border:0;text-align:center;background:transparent;font-size:14px}.cart-stepper input{border-radius:0}.icon-button{display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:var(--muted);padding:5px;min-width:30px;min-height:36px;flex-shrink:0}.icon-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6}.cart-reference{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:6px 0 0 27px;max-width:370px;color:var(--muted);font-size:11px}.delta{font-size:11px;line-height:1.4;overflow-wrap:anywhere}.up{color:var(--up)}.down{color:var(--down)}.neutral{color:var(--muted)}.empty{padding:24px 0;text-align:center;color:var(--muted);font-size:14px}.checkout-summary{display:flex;justify-content:space-between;align-items:start;gap:15px;flex-wrap:wrap;margin-top:18px}.checkout-total{display:flex;flex-direction:column;align-items:flex-end;gap:13px;margin-left:auto}.checkout-total>span{color:var(--muted);font-size:13px}.checkout-total strong{color:var(--ink);font-size:24px;margin-left:5px}.checkout-total button{min-width:135px}.inline-check{flex-direction:row;align-items:center;gap:8px}.comparison-grid{display:grid;grid-template-columns:minmax(130px,1.3fr) repeat(5,minmax(0,1fr));gap:12px;padding:16px 0;border-bottom:1px solid var(--line);font-size:13px}.comparison-head{font-size:12px;color:var(--muted)}.comparison-head strong{color:var(--ink)}.month-shops,.comparison-cell small{display:block;font-size:11px;line-height:1.5;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}.comparison-cell .delta{display:block;margin-top:5px}.comparison-product small{display:block;font-size:11px;color:var(--muted);margin-top:5px}.mobile-month{display:none}.hide-shops .month-shops{display:none}.legend{display:flex;flex-wrap:wrap;gap:15px;font-size:11px;margin:18px 0}.history-purchases{margin-top:28px}.purchase{padding:14px 0;border-bottom:1px solid var(--line)}.purchase summary{cursor:pointer;line-height:1.7;overflow-wrap:anywhere}.purchase summary>span{font-size:12px;color:var(--muted)}.purchase-lines{padding:8px 0 0 15px}.purchase-line{display:flex;justify-content:space-between;gap:15px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}.purchase-line small{display:block;color:var(--muted);font-size:11px;line-height:1.5;margin-top:4px}.record-price{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}.purchase-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}.purchase-footer button{font-size:12px}.danger,.error{color:var(--up)}.notice{font-size:13px;padding:12px;border:1px solid var(--line);border-radius:8px;margin-bottom:16px;color:var(--up)}.message{min-height:18px;font-size:12px;color:var(--green);margin-top:12px}.message.error{color:var(--up)}footer{font-size:11px;line-height:1.5;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;margin-top:24px}dialog{border:1px solid var(--line);border-radius:14px;padding:22px;width:min(460px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto;background:var(--paper);color:var(--ink)}dialog::backdrop{background:#142b1d70}dialog h2{font-size:20px}dialog label{margin-top:15px}.edit-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.error{font-size:12px}.error:empty{display:none}
+@media(max-width:700px){.app{padding:18px 12px}.app-header{gap:12px;margin-bottom:15px}h1{font-size:23px}.backup-actions button{padding:6px 8px;font-size:11px}.tabs{margin-bottom:15px}.tabs button{flex:1;min-height:40px;font-size:13px;padding:8px}.composer{padding:10px;margin-bottom:19px}.add-fields{grid-template-columns:60px minmax(0,1fr) 70px;gap:9px 8px;margin-top:10px}.weight-field{grid-column:1/3;grid-row:1}.unit-field{grid-column:3;grid-row:1}.qty-field{grid-column:1;grid-row:2}.price-field{grid-column:2;grid-row:2}.add-button{grid-column:3;grid-row:2}.add-fields label{font-size:11px;white-space:nowrap}.weight-stepper{grid-template-columns:38px minmax(0,1fr) 38px}.add-fields input,.add-fields select,.add-button{height:44px;min-height:44px;padding:8px}.weight-stepper button{padding:0}.price-field>span{font-size:11px}.product-name{font-size:14px}.cart-amount{font-size:13px;max-width:100px}.cart-product small{font-size:11px}.cart-controls{gap:6px;max-width:none}.inline-price{font-size:11px;gap:5px}.inline-price input{width:75px;font-size:14px}.cart-stepper{grid-template-columns:30px 30px 30px}.cart-reference{max-width:none}.cart-item{padding:12px 0}.checkout-summary{margin-top:16px}.checkout-summary>.hint{max-width:150px}.checkout-total strong{font-size:22px}.checkout-total button{min-width:110px}.comparison-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px 12px}.comparison-head{display:none}.comparison-product{grid-column:1/-1;font-size:14px}.mobile-month{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.comparison-cell{font-size:14px}.history-purchases label{width:100%;max-width:260px}.purchase-lines{padding-left:4px}.section-heading>button{font-size:11px}.edit-item{min-height:28px}.purchase summary{font-size:13px}}
+@media(pointer:coarse){input,select{font-size:16px!important}.cart-stepper{grid-template-columns:36px 30px 36px}.cart-stepper input,.cart-stepper button,.inline-price input,.remove-item{height:44px;min-height:44px}.edit-item{min-height:32px}.remove-item{min-width:32px}}
+@media(max-width:350px){.app{padding:16px 10px}.backup-actions button{font-size:10px}.cart-controls,.cart-reference{margin-left:0}.inline-price input{width:65px}.inline-price{gap:4px}.cart-top{gap:7px}.cart-amount{max-width:85px;font-size:12px}.checkout-summary>.hint{max-width:125px}.add-fields{grid-template-columns:52px minmax(0,1fr) 64px;gap:8px 6px}.price-field>span{font-size:10px}.cart-stepper{grid-template-columns:32px 30px 32px}.edit-fields{grid-template-columns:1fr 1fr}}
+/* Retail cart and closed-by-default add form. */
+.add-panel{border:1px solid var(--line);border-radius:10px;background:var(--paper);margin-bottom:20px}.add-panel>summary{padding:12px 14px;min-height:46px;cursor:pointer;font-size:14px;color:var(--green);font-weight:500;display:flex;justify-content:space-between;align-items:center;gap:12px;list-style:none}.add-panel>summary::-webkit-details-marker{display:none}.add-panel>summary::after{content:'⌄';font-size:18px;line-height:1}.add-panel[open]>summary::after{content:'⌃'}.add-panel[open]>summary{border-bottom:1px solid var(--line)}.add-panel .composer{border:0;border-radius:0 0 10px 10px;margin:0;padding:12px}.retail-row{display:grid;grid-template-columns:minmax(0,1fr) 106px 72px;gap:14px;align-items:center;padding:13px 0;min-height:86px;border-bottom:1px solid var(--line)}.retail-product{min-width:0}.retail-name{display:block;border:0;background:transparent;text-align:left;min-height:24px;margin:0 0 5px;padding:0;font-size:15px;font-weight:500;max-width:100%;overflow-wrap:anywhere}.retail-name:hover:not(:disabled){background:transparent;text-decoration:underline}.retail-meta{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.retail-size{font-size:12px;color:var(--muted);white-space:nowrap}.retail-price{display:flex;flex-direction:row;align-items:center;gap:3px;font-size:11px;color:var(--muted)}.retail-price input{width:66px;height:32px;min-height:32px;padding:5px;font-size:14px}.retail-last{font-size:11px;white-space:nowrap;color:var(--muted)}.retail-last.up{color:var(--up)}.retail-last.down{color:var(--down)}.retail-qty{display:grid;grid-template-columns:34px 38px 34px;background:#ffdb12;color:#27260c;border-radius:24px;overflow:hidden;align-items:center}.retail-qty input,.retail-qty button{height:36px;min-height:36px;width:100%;border:0;padding:0;text-align:center;color:#27260c}.retail-qty button{font-size:20px;background:transparent}.retail-qty button:hover:not(:disabled){background:#f7d00d}.retail-qty input{background:#fff7c2;border-radius:12px;margin:1px 0;height:34px;min-height:34px;font-size:14px}.retail-end{text-align:right;min-width:0}.retail-amount{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;display:block}.retail-remove{display:block;margin:5px 0 0 auto;background:transparent;border:0;padding:0;min-height:24px;font-size:11px;color:var(--muted)}.retail-remove:hover:not(:disabled){background:transparent;color:var(--up)}
+@media(max-width:700px){.add-panel{margin-bottom:15px}.add-panel .composer{padding:10px}.retail-row{grid-template-columns:minmax(0,1fr) 90px 48px;gap:8px;padding:12px 0}.retail-name{font-size:14px}.retail-meta{gap:6px}.retail-price input{width:54px;font-size:13px;height:32px;min-height:32px}.retail-size{font-size:12px}.retail-qty{grid-template-columns:30px 30px 30px}.retail-amount{font-size:14px}.retail-remove{font-size:10px}}
+@media(max-width:350px){.retail-row{grid-template-columns:minmax(0,1fr) 84px 44px;gap:5px}.retail-qty{grid-template-columns:28px 28px 28px}.retail-meta{gap:5px}.retail-price input{width:47px}.retail-amount{font-size:13px}}
+@media(pointer:coarse){.retail-price input{height:38px;min-height:38px;font-size:16px}.retail-qty button{height:44px;min-height:44px}.retail-qty input{height:42px;min-height:42px;font-size:16px}.retail-remove{min-height:32px}.retail-name{min-height:32px}}
+
+</style></head>
+<body><main class="app">
+<header class="app-header"><div><h1>Shopping list</h1><p id="current-month"></p></div><div class="backup-actions"><button id="export" type="button">Export backup</button><button id="import" type="button">Import backup</button><input type="file" id="import-file" accept="application/json,.json" hidden></div></header>
+<div id="storage-note" class="notice" hidden role="alert"></div>
+<nav class="tabs" aria-label="Pages"><button id="list-tab" type="button" aria-current="page">Shopping list</button><button id="history-tab" type="button">Purchase history</button></nav>
+<section id="list-page" aria-labelledby="list-tab">
+<details id="add-panel" class="add-panel"><summary id="add-toggle" aria-controls="add-form">+ Add item</summary><form id="add-form" class="composer"><input type="search" id="product-search" aria-label="Find a product" autocomplete="off" placeholder="Search product…" maxlength="160" required><div id="suggestions" class="suggestions" aria-label="Matching products"></div>
+<div class="add-fields"><label class="weight-field">Weight / size<span class="weight-stepper"><button type="button" id="weight-minus" aria-label="Decrease weight">−</button><input id="weight" type="number" value="0.5" min="0.5" step="0.5" required aria-label="Weight or size"><button type="button" id="weight-plus" aria-label="Increase weight">+</button></span></label><label class="unit-field">Unit<select id="unit"><option>Kg</option><option>Gm</option><option>Packs</option><option>Lts</option><option>ml</option></select></label><label class="qty-field">Qty<input id="quantity" type="number" min="1" step="1" value="1" required></label><label class="price-field"><span>Price ₹ · optional</span><input id="rate" type="number" min="0" step="0.01" placeholder="Price" aria-label="Price for this size, optional"></label><button class="primary add-button" type="submit">+ Add</button></div><p id="last-reference" class="hint" hidden></p></form></details>
+<div class="section-heading"><div><h2>This month’s groceries</h2><span id="list-count" class="hint"></span></div><button id="load-previous" type="button">Load last month’s list</button></div>
+<div id="shopping-items"></div><p id="list-empty" class="empty">Your list is empty. Search above to add your first product.</p>
+<div class="checkout-summary"><p class="hint" id="total-note">Total = price × Qty</p><div class="checkout-total"><span><span id="total-label">List total</span> <strong id="list-total">₹0</strong></span><button id="buy" class="primary" type="button" disabled>Buy</button></div></div><p class="hint">Buy saves the entire list.</p>
+</section>
+<section id="history-page" aria-labelledby="history-tab" hidden><div class="section-heading"><div><h2>5-month comparison</h2><p id="history-range" class="hint"></p></div><label class="inline-check"><input type="checkbox" id="show-shops" checked> Show shop names</label></div><p class="hint">Average price for the same product and size. Missing prices are excluded from averages and shown as pending.</p><div id="comparison"></div><p id="history-empty" class="empty" hidden>No previous-month purchases yet. Your saved purchases will appear here.</p><div class="legend"><span class="up">↑ Price increased</span><span class="down">↓ Price decreased</span><span>＝ Unchanged</span><span>— No purchase</span></div><div class="section-heading history-purchases"><div><h2>Purchase records</h2><p class="hint">Each shop visit stays separate, including multiple visits in one month.</p></div><label>Month<select id="records-month"></select></label></div><div id="purchase-records"></div><p class="hint">Saved in this browser: current month + last five completed months. Export a backup before older records roll out.</p></section>
+<footer>Saved on this device · Export a backup to keep a copy or move to another device.</footer><div id="message" class="message" role="status" aria-live="polite"></div>
+</main>
+<dialog id="buy-dialog" aria-labelledby="buy-title"><form id="buy-form"><h2 id="buy-title">Finish purchase</h2><p id="buy-description" class="hint"></p><label>Shop name<input id="shop-name" maxlength="160" placeholder="Enter shop name" autocomplete="organization" required></label><label>Purchase date<input id="purchase-date" type="date" required></label><p class="hint">Finish saves this purchase and clears the shopping list.</p><p id="buy-error" class="error" role="alert"></p><div class="dialog-actions"><button id="cancel-buy" type="button">Cancel</button><button id="finish-buy" class="primary" type="submit">Finish</button></div></form></dialog>
+<dialog id="edit-dialog" aria-labelledby="edit-title"><form id="edit-form"><h2 id="edit-title">Edit item</h2><label>Product name<input id="edit-name" maxlength="160" required></label><div class="edit-fields"><label>Weight / size<input id="edit-weight" type="number" min="0.001" step="any" required></label><label>Unit<select id="edit-unit"><option>Kg</option><option>Gm</option><option>Packs</option><option>Lts</option><option>ml</option></select></label><label>Qty<input id="edit-qty" type="number" min="1" step="1" required></label><label>Price ₹ · optional<input id="edit-rate" type="number" min="0" step="0.01" placeholder="Price"></label></div><p id="edit-error" class="error" role="alert"></p><div class="dialog-actions"><button id="cancel-edit" type="button">Cancel</button><button type="submit" class="primary">Save changes</button></div></form></dialog>
+<dialog id="confirm-dialog" aria-labelledby="confirm-title"><h2 id="confirm-title">Confirm</h2><p id="confirm-text"></p><div class="dialog-actions"><button id="confirm-no" type="button">Cancel</button><button id="confirm-yes" class="primary" type="button">Confirm</button></div></dialog>
+<dialog id="purchase-price-dialog" aria-labelledby="purchase-price-title"><form id="purchase-price-form"><h2 id="purchase-price-title">Edit purchase price</h2><label>Price ₹ · optional<input id="purchase-price" type="number" min="0" step="0.01" placeholder="Price"></label><p class="hint">Price for one of this size. Total = price × Qty.</p><p id="purchase-price-error" class="error" role="alert"></p><div class="dialog-actions"><button id="cancel-purchase-price" type="button">Cancel</button><button type="submit" class="primary">Save price</button></div></form></dialog>
+<script>
+(function(global){
+ 'use strict';
+ const RULES={Kg:{value:.5,step:.5},Gm:{value:50,step:50},Packs:{value:1,step:1},Lts:{value:500,step:500},ml:{value:50,step:50}};
+ const STORAGE_KEY='groceries.shopping.v1'; // Preserve the original browser-storage location.
+ const copy=x=>JSON.parse(JSON.stringify(x));
+ const id=()=>global.crypto?.randomUUID?.()||Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+ function today(){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+ function shiftMonth(month,offset){const [y,m]=month.split('-').map(Number);return new Date(Date.UTC(y,m-1+offset,1)).toISOString().slice(0,7)}
+ const months=(current=today().slice(0,7))=>Array.from({length:5},(_,i)=>shiftMonth(current,i-5));
+ const empty=catalog=>({version:2,catalog:copy(catalog),draft:[],purchases:[],showShops:true});
+ const finite=(n,min,integer=false)=>typeof n==='number'&&Number.isFinite(n)&&n>=min&&(!integer||Number.isInteger(n));
+ const text=(s,max=160)=>typeof s==='string'&&s.trim().length>0&&s.length<=max;
+ function validDate(s){return typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s+'T00:00:00Z'))&&new Date(s+'T00:00:00Z').toISOString().slice(0,10)===s}
+ // A price belongs to the entered size, e.g. 50 Gm costs Rs 10. Weight never multiplies price.
+ const amount=p=>p.price===null?null:p.qty*p.price;
+ function summary(items){let total=0,pending=0;for(const p of items){const n=amount(p);if(n===null)pending++;else total+=n}return {total,pending,complete:pending===0}}
+ function validItem(p){return p&&text(p.id)&&text(p.productId)&&text(p.name)&&Object.hasOwn(RULES,p.unit)&&finite(p.weight,.001)&&finite(p.qty,1,true)&&(p.price===null||finite(p.price,0))&&(amount(p)===null||Number.isFinite(amount(p)))}
+ function validate(s){
+  if(!s||s.version!==2||!Array.isArray(s.catalog)||!Array.isArray(s.draft)||!Array.isArray(s.purchases))throw Error('This is not a valid grocery backup.');
+  if(s.catalog.length>10000||s.draft.length>2000||s.purchases.length>20000)throw Error('Backup is too large.');
+  if(!s.catalog.every(p=>p&&text(p.id)&&text(p.name)&&Object.hasOwn(RULES,p.unit)&&[p.tamil,p.aliases].every(x=>x===undefined||typeof x==='string'&&x.length<=2000)))throw Error('Invalid products in backup.');
+  if(new Set(s.catalog.map(p=>p.id)).size!==s.catalog.length)throw Error('Duplicate product IDs in backup.');
+  if(!s.draft.every(p=>validItem(p)&&s.catalog.some(x=>x.id===p.productId)))throw Error('Invalid shopping list in backup.');
+  if(new Set(s.draft.map(p=>p.id)).size!==s.draft.length)throw Error('Duplicate list rows in backup.');
+  if(!s.purchases.every(p=>p&&text(p.id)&&text(p.shop)&&validDate(p.date)&&Array.isArray(p.items)&&p.items.length>0&&p.items.length<=2000&&p.items.every(validItem)&&Number.isFinite(summary(p.items).total)))throw Error('Invalid purchases in backup.');
+  if(new Set(s.purchases.map(p=>p.id)).size!==s.purchases.length)throw Error('Duplicate purchases in backup.');
+  if(!Number.isFinite(summary(s.draft).total))throw Error('The list total is too large.');return s;
+ }
+ function upgrade(raw){const s=copy(raw);if(s.version===1){const convert=p=>{p.price=p.rate;delete p.rate;return p};if(!Array.isArray(s.draft)||!Array.isArray(s.purchases))throw Error('Invalid legacy backup.');s.draft=s.draft.map(convert);s.purchases.forEach(p=>{if(!Array.isArray(p.items))throw Error('Invalid legacy purchase.');p.items=p.items.map(convert)});s.version=2}return validate(s)}
+ const unitInfo=unit=>({Kg:['weight',1000,'Gm'],Gm:['weight',1,'Gm'],Lts:['volume',1000,'ml'],ml:['volume',1,'ml'],Packs:['packs',1,'Packs']}[unit]);
+ // Equivalent sizes (0.5 Kg / 500 Gm) compare; different sizes (50 Gm / 100 Gm) stay separate.
+ function sizeKey(p){const info=unitInfo(p.unit);return p.productId+'|'+info[0]+'|'+(p.weight*info[1]).toFixed(6)}
+ function stats(purchases,month,item){const key=sizeKey(item);let qty=0,pricedQty=0,total=0,pending=0;const shops=new Set();for(const purchase of purchases){if(purchase.date.slice(0,7)!==month)continue;for(const p of purchase.items){if(sizeKey(p)!==key)continue;qty+=p.qty;shops.add(purchase.shop);if(p.price===null)pending+=p.qty;else{pricedQty+=p.qty;total+=amount(p)}}}return qty?{qty,total,pending,price:pricedQty?total/pricedQty:null,shops:[...shops]}:null}
+ const reference=(purchases,month,item)=>stats(purchases,month,item);
+ function delta(now,old){if(now==null||old==null)return null;return {value:now-old,percent:old===0?null:(now-old)/old*100}}
+ function mergePrevious(state,month){const next=copy(state),groups=new Map();let added=0;for(const purchase of state.purchases.filter(p=>p.date.startsWith(month))){for(const p of purchase.items){const key=sizeKey(p);if(!groups.has(key))groups.set(key,{...p,qty:0,pricedQty:0,total:0});const g=groups.get(key);g.qty+=p.qty;if(p.price!==null){g.total+=amount(p);g.pricedQty+=p.qty}}}for(const g of groups.values()){if(next.draft.some(p=>sizeKey(p)===sizeKey(g)))continue;let product=next.catalog.find(p=>p.id===g.productId);if(!product){product={id:g.productId,name:g.name,unit:g.unit};next.catalog.push(product)}next.draft.push({id:id(),productId:g.productId,name:product.name,unit:g.unit,weight:g.weight,qty:g.qty,price:g.pricedQty?Math.round(g.total/g.pricedQty*100)/100:null,selected:false});added++}return {state:next,added}}
+ function checkout(state,shop,date){if(!text(shop))throw Error('Enter a shop name (up to 160 characters).');if(!validDate(date)||date>today()||date.slice(0,7)<shiftMonth(today().slice(0,7),-5))throw Error('Choose a date within the current month or last five months.');if(!state.draft.length)throw Error('Your list is empty.');const next=copy(state),purchase={id:id(),shop:shop.trim(),date,items:next.draft.map(p=>({...p,selected:false}))};next.purchases.push(purchase);next.draft=[];validate(next);return {state:next,purchase}}
+ function retained(state,current=today().slice(0,7)){const next=copy(state);next.purchases=next.purchases.filter(p=>p.date.slice(0,7)>=shiftMonth(current,-5));return next}
+ function save(storage,state){validate(state);storage.setItem(STORAGE_KEY,JSON.stringify(state));return state}
+ const api={RULES,STORAGE_KEY,copy,id,today,shiftMonth,months,empty,validate,upgrade,amount,summary,unitInfo,sizeKey,stats,reference,delta,mergePrevious,checkout,retained,save};if(typeof module!=='undefined'&&module.exports)module.exports=api;else global.GroceryModel=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+</script><script>
+window.GROCERY_CATALOG = [
+  {
+    "name": "Manjal thool",
+    "unit": "Kg",
+    "tamil": "மஞ்சள் தூள்",
+    "aliases": "turmeric powder",
+    "id": "product-1"
+  },
+  {
+    "name": "Kadugu",
+    "unit": "Kg",
+    "tamil": "கடுகு",
+    "aliases": "mustard seeds kaduku",
+    "id": "product-2"
+  },
+  {
+    "name": "Seeragam",
+    "unit": "Kg",
+    "tamil": "சீரகம்",
+    "aliases": "cumin jeeragam",
+    "id": "product-3"
+  },
+  {
+    "name": "Milagu",
+    "unit": "Kg",
+    "tamil": "மிளகு",
+    "aliases": "black pepper",
+    "id": "product-4"
+  },
+  {
+    "name": "Sombu",
+    "unit": "Kg",
+    "tamil": "சோம்பு",
+    "aliases": "fennel soambu",
+    "id": "product-5"
+  },
+  {
+    "name": "Kirambu",
+    "unit": "Kg",
+    "tamil": "கிராம்பு",
+    "aliases": "cloves grambu",
+    "id": "product-6"
+  },
+  {
+    "name": "Pattai",
+    "unit": "Kg",
+    "tamil": "பட்டை",
+    "aliases": "cinnamon",
+    "id": "product-7"
+  },
+  {
+    "name": "Elakkai",
+    "unit": "Kg",
+    "tamil": "ஏலக்ககாய்",
+    "aliases": "cardamom yelakkai",
+    "id": "product-8"
+  },
+  {
+    "name": "Biriyani ilai",
+    "unit": "Kg",
+    "tamil": "பிரியாணி இலை",
+    "aliases": "bay leaf biryani",
+    "id": "product-9"
+  },
+  {
+    "name": "Mundhiri",
+    "unit": "Kg",
+    "tamil": "முந்திரி",
+    "aliases": "cashew nuts munthiri",
+    "id": "product-10"
+  },
+  {
+    "name": "Ular thiratchai",
+    "unit": "Kg",
+    "tamil": "உலர்திராட்சை",
+    "aliases": "raisins dry grapes",
+    "id": "product-11"
+  },
+  {
+    "name": "Rasam powder",
+    "unit": "Kg",
+    "tamil": "ரசம் பவுடர்",
+    "aliases": "rasam podi",
+    "id": "product-12"
+  },
+  {
+    "name": "Garam masala powder",
+    "unit": "Kg",
+    "tamil": "கரம் மசாலா பவுடர்",
+    "aliases": "garam masala podi",
+    "id": "product-13"
+  },
+  {
+    "name": "Vendhayam",
+    "unit": "Kg",
+    "tamil": "வெந்தயம்",
+    "aliases": "fenugreek venthayam",
+    "id": "product-14"
+  },
+  {
+    "name": "Saappadu arisi",
+    "unit": "Kg",
+    "tamil": "சாப்பாடு அரிசி",
+    "aliases": "cooking rice sappadu",
+    "id": "product-15"
+  },
+  {
+    "name": "Idli arisi",
+    "unit": "Kg",
+    "tamil": "இட்லி அரிசி",
+    "aliases": "idli rice idly",
+    "id": "product-16"
+  },
+  {
+    "name": "Pachai arisi",
+    "unit": "Kg",
+    "tamil": "பச்சை அரிசி",
+    "aliases": "raw rice pacharisi",
+    "id": "product-17"
+  },
+  {
+    "name": "Pachai arisi maavu",
+    "unit": "Kg",
+    "tamil": "பச்சை அரிசி மாவு",
+    "aliases": "raw rice flour",
+    "id": "product-18"
+  },
+  {
+    "name": "Aval",
+    "unit": "Kg",
+    "tamil": "அவல்",
+    "aliases": "flattened rice poha",
+    "id": "product-19"
+  },
+  {
+    "name": "Kothumai maavu",
+    "unit": "Kg",
+    "tamil": "கோதுமை மாவு",
+    "aliases": "wheat flour gothumai atta",
+    "id": "product-20"
+  },
+  {
+    "name": "Maida",
+    "unit": "Kg",
+    "tamil": "மைதா",
+    "aliases": "refined flour",
+    "id": "product-21"
+  },
+  {
+    "name": "Vellai ravai",
+    "unit": "Kg",
+    "tamil": "வெள்ளை ரவை",
+    "aliases": "white semolina sooji",
+    "id": "product-22"
+  },
+  {
+    "name": "Samba kothumai ravai",
+    "unit": "Kg",
+    "tamil": "சம்பா கோதுமை ரவை",
+    "aliases": "broken wheat dalia",
+    "id": "product-23"
+  },
+  {
+    "name": "Semiya",
+    "unit": "Kg",
+    "tamil": "சேமியா",
+    "aliases": "vermicelli semiya",
+    "id": "product-24"
+  },
+  {
+    "name": "Ragi maavu",
+    "unit": "Kg",
+    "tamil": "ராகி மாவு",
+    "aliases": "finger millet flour kezhvaragu",
+    "id": "product-25"
+  },
+  {
+    "name": "Kambu",
+    "unit": "Kg",
+    "tamil": "கம்பு",
+    "aliases": "pearl millet bajra",
+    "id": "product-26"
+  },
+  {
+    "name": "Thuvaram paruppu",
+    "unit": "Kg",
+    "tamil": "துவரம் பருப்பு",
+    "aliases": "toor dal thuv arhar pigeon pea",
+    "id": "product-27"
+  },
+  {
+    "name": "Kadalai paruppu",
+    "unit": "Kg",
+    "tamil": "கடலை பருப்பு",
+    "aliases": "chana dal bengal gram",
+    "id": "product-28"
+  },
+  {
+    "name": "Udaitha kadalai",
+    "unit": "Kg",
+    "tamil": "உடைத்த கடலை",
+    "aliases": "roasted gram pottukadalai",
+    "id": "product-29"
+  },
+  {
+    "name": "Paasi paruppu",
+    "unit": "Kg",
+    "tamil": "பாசி பருப்பு",
+    "aliases": "moong dal pasi",
+    "id": "product-30"
+  },
+  {
+    "name": "Ulundhu",
+    "unit": "Kg",
+    "tamil": "உளுந்து",
+    "aliases": "urad dal ulundu",
+    "id": "product-31"
+  },
+  {
+    "name": "Thaalikkum ulundhu",
+    "unit": "Kg",
+    "tamil": "தாளிக்கும் உளுந்து",
+    "aliases": "split urad dal tempering",
+    "id": "product-32"
+  },
+  {
+    "name": "Kadalai maavu",
+    "unit": "Kg",
+    "tamil": "கடலை மாவு",
+    "aliases": "gram flour besan",
+    "id": "product-33"
+  },
+  {
+    "name": "Paasi payaru",
+    "unit": "Kg",
+    "tamil": "பாசி பயறு",
+    "aliases": "green gram mung pasi",
+    "id": "product-34"
+  },
+  {
+    "name": "Kondai kadalai",
+    "unit": "Kg",
+    "tamil": "கொண்டை கடலை",
+    "aliases": "chickpeas chana kondaikadalai",
+    "id": "product-35"
+  },
+  {
+    "name": "Nilakadalai",
+    "unit": "Kg",
+    "tamil": "நிலகடலை",
+    "aliases": "groundnut peanut verkadalai",
+    "id": "product-36"
+  },
+  {
+    "name": "Thattai payaru",
+    "unit": "Kg",
+    "tamil": "தட்டை பயறு",
+    "aliases": "cowpea black eyed peas karamani",
+    "id": "product-37"
+  },
+  {
+    "name": "Kaaintha pattani",
+    "unit": "Kg",
+    "tamil": "காய்ந்த பட்டாணி",
+    "aliases": "dried peas kayntha",
+    "id": "product-38"
+  },
+  {
+    "name": "Beans",
+    "unit": "Kg",
+    "tamil": "பீன்ஸ்",
+    "aliases": "beans",
+    "id": "product-39"
+  },
+  {
+    "name": "Mochai",
+    "unit": "Kg",
+    "tamil": "மொச்சை",
+    "aliases": "field beans",
+    "id": "product-40"
+  },
+  {
+    "name": "Kollu",
+    "unit": "Kg",
+    "tamil": "கொள்ளு",
+    "aliases": "horse gram",
+    "id": "product-41"
+  },
+  {
+    "name": "Refined oil",
+    "unit": "Kg",
+    "tamil": "ரிபைன்டு  ஆயில்",
+    "aliases": "refined aayil",
+    "id": "product-42"
+  },
+  {
+    "name": "Nalla ennai",
+    "unit": "Kg",
+    "tamil": "நல்ல எண்ணெய்",
+    "aliases": "sesame oil gingelly nallennai",
+    "id": "product-43"
+  },
+  {
+    "name": "Thengai ennai",
+    "unit": "Kg",
+    "tamil": "தேங்காய் எண்ணெய்",
+    "aliases": "coconut oil thengai enney",
+    "id": "product-44"
+  },
+  {
+    "name": "Nei",
+    "unit": "Kg",
+    "tamil": "நெய்",
+    "aliases": "ghee ney",
+    "id": "product-45"
+  },
+  {
+    "name": "Vennai",
+    "unit": "Kg",
+    "tamil": "வெண்ணை",
+    "aliases": "butter venney",
+    "id": "product-46"
+  },
+  {
+    "name": "Dalda",
+    "unit": "Kg",
+    "tamil": "டால்டா",
+    "aliases": "vanaspati",
+    "id": "product-47"
+  },
+  {
+    "name": "Vilakku ennai",
+    "unit": "Kg",
+    "tamil": "விளக்கு எண்ணெய்",
+    "aliases": "lamp oil",
+    "id": "product-48"
+  },
+  {
+    "name": "Refined palm oil",
+    "unit": "Kg",
+    "tamil": "ரிபைன்டு  பாமாயில்",
+    "aliases": "pamaayil palmolein",
+    "id": "product-49"
+  },
+  {
+    "name": "Sakkarai",
+    "unit": "Kg",
+    "tamil": "சக்கரை",
+    "aliases": "sugar sarkarai",
+    "id": "product-50"
+  },
+  {
+    "name": "Kal uppu",
+    "unit": "Kg",
+    "tamil": "கல் உப்பு",
+    "aliases": "rock salt",
+    "id": "product-51"
+  },
+  {
+    "name": "Salt uppu",
+    "unit": "Kg",
+    "tamil": "சால்ட் உப்பு",
+    "aliases": "table salt",
+    "id": "product-52"
+  },
+  {
+    "name": "Vara milagai",
+    "unit": "Kg",
+    "tamil": "வரமிளகாய்",
+    "aliases": "dried red chilli varamilagai",
+    "id": "product-53"
+  },
+  {
+    "name": "Dhaniya / Malli",
+    "unit": "Kg",
+    "tamil": "தனியா/மல்லி",
+    "aliases": "coriander seeds thaniya",
+    "id": "product-54"
+  },
+  {
+    "name": "Milagai thool",
+    "unit": "Kg",
+    "tamil": "மிளகாய் தூள்",
+    "aliases": "chilli powder",
+    "id": "product-55"
+  },
+  {
+    "name": "Malli thool",
+    "unit": "Kg",
+    "tamil": "மல்லி தூள்",
+    "aliases": "coriander powder",
+    "id": "product-56"
+  },
+  {
+    "name": "Perungayam",
+    "unit": "Packs",
+    "tamil": "பெருங்காயம்",
+    "aliases": "asafoetida hing perunkayam",
+    "id": "product-57"
+  },
+  {
+    "name": "Puli",
+    "unit": "Kg",
+    "tamil": "புளி",
+    "aliases": "tamarind",
+    "id": "product-58"
+  },
+  {
+    "name": "Poondu",
+    "unit": "Kg",
+    "tamil": "பூண்டு",
+    "aliases": "garlic",
+    "id": "product-59"
+  },
+  {
+    "name": "Appalam",
+    "unit": "Kg",
+    "tamil": "அப்பளம்",
+    "aliases": "papad",
+    "id": "product-60"
+  },
+  {
+    "name": "Oorugai",
+    "unit": "Kg",
+    "tamil": "ஊறுகாய்",
+    "aliases": "pickle oorukai",
+    "id": "product-61"
+  },
+  {
+    "name": "Kaapi",
+    "unit": "Kg",
+    "tamil": "காபி",
+    "aliases": "coffee kapi",
+    "id": "product-62"
+  },
+  {
+    "name": "Tea 3 Roses",
+    "unit": "Kg",
+    "tamil": "டீ 3 ரோசஸ்",
+    "aliases": "tea thee",
+    "id": "product-63"
+  },
+  {
+    "name": "Vellam",
+    "unit": "Kg",
+    "tamil": "வெல்லம்",
+    "aliases": "jaggery",
+    "id": "product-64"
+  },
+  {
+    "name": "Javvarisi",
+    "unit": "Kg",
+    "tamil": "ஜவ்வரிசி",
+    "aliases": "sago tapioca pearls",
+    "id": "product-65"
+  },
+  {
+    "name": "Samayal soda",
+    "unit": "Kg",
+    "tamil": "சமையல் சோடா",
+    "aliases": "baking soda",
+    "id": "product-66"
+  },
+  {
+    "name": "Bread",
+    "unit": "Packs",
+    "tamil": "பிரெட்",
+    "aliases": "rotti",
+    "id": "product-67"
+  },
+  {
+    "name": "Biscuit",
+    "unit": "Packs",
+    "tamil": "பிஸ்கட்",
+    "aliases": "biscuits",
+    "id": "product-68"
+  },
+  {
+    "name": "Perichai",
+    "unit": "Kg",
+    "tamil": "பேரிச்சை",
+    "aliases": "dates perichampazham",
+    "id": "product-69"
+  },
+  {
+    "name": "Then",
+    "unit": "Kg",
+    "tamil": "தேன்",
+    "aliases": "honey thaen",
+    "id": "product-70"
+  },
+  {
+    "name": "Oats",
+    "unit": "Kg",
+    "tamil": "ஓட்ஸ்",
+    "aliases": "oats",
+    "id": "product-71"
+  },
+  {
+    "name": "Jam / Ketchup",
+    "unit": "Packs",
+    "tamil": "ஜாம் / கெட்ச்சப்",
+    "aliases": "jam ketchup",
+    "id": "product-72"
+  },
+  {
+    "name": "Horlicks",
+    "unit": "Kg",
+    "tamil": "ஹார்லிக்ஸ்",
+    "aliases": "horlicks",
+    "id": "product-73"
+  },
+  {
+    "name": "Complan",
+    "unit": "Kg",
+    "tamil": "காம்ப்ளான்",
+    "aliases": "complan",
+    "id": "product-74"
+  },
+  {
+    "name": "Boost",
+    "unit": "Kg",
+    "tamil": "பூஸ்ட்",
+    "aliases": "boost",
+    "id": "product-75"
+  },
+  {
+    "name": "Kuliyal soap",
+    "unit": "Packs",
+    "tamil": "குளியல் சோப்பு",
+    "aliases": "bath soap kuliyal soppu",
+    "id": "product-76"
+  },
+  {
+    "name": "Parpasai",
+    "unit": "Packs",
+    "tamil": "பற்பசை",
+    "aliases": "toothpaste",
+    "id": "product-77"
+  },
+  {
+    "name": "Vaai koppalippaan",
+    "unit": "Packs",
+    "tamil": "வாய் கொப்பளிப்பான்",
+    "aliases": "mouthwash",
+    "id": "product-78"
+  },
+  {
+    "name": "Brush",
+    "unit": "Packs",
+    "tamil": "பிரஷ்",
+    "aliases": "toothbrush",
+    "id": "product-79"
+  },
+  {
+    "name": "Shampoo",
+    "unit": "Packs",
+    "tamil": "ஷாம்பூ",
+    "aliases": "shampoo",
+    "id": "product-80"
+  },
+  {
+    "name": "Salavai soap katti",
+    "unit": "Packs",
+    "tamil": "சலவை சோப்பு கட்டி",
+    "aliases": "laundry soap bar",
+    "id": "product-81"
+  },
+  {
+    "name": "Salavai soap powder",
+    "unit": "Kg",
+    "tamil": "சலவை சோப்பு பவுடர்",
+    "aliases": "detergent washing powder",
+    "id": "product-82"
+  },
+  {
+    "name": "Salavai soda",
+    "unit": "Kg",
+    "tamil": "சலவை சோடா",
+    "aliases": "washing soda",
+    "id": "product-83"
+  },
+  {
+    "name": "Dishwashing soap",
+    "unit": "Packs",
+    "tamil": "டிஷ் வாஷிங் சோப்பு",
+    "aliases": "dish wash soap",
+    "id": "product-84"
+  },
+  {
+    "name": "Kai kazhuvum thiravam",
+    "unit": "Packs",
+    "tamil": "கைகழுவும் திரவம்",
+    "aliases": "handwash",
+    "id": "product-85"
+  },
+  {
+    "name": "Tharai cleaner (Lysol)",
+    "unit": "Packs",
+    "tamil": "தரை கிளீனர் (லைசால்)",
+    "aliases": "floor cleaner lizol",
+    "id": "product-86"
+  },
+  {
+    "name": "Kazhipparai cleaner (Harpic)",
+    "unit": "Packs",
+    "tamil": "கழிப்பறை கிளீனர் (ஹார்பிக்)",
+    "aliases": "toilet cleaner",
+    "id": "product-87"
+  },
+  {
+    "name": "Easy Off Bang",
+    "unit": "Packs",
+    "tamil": "ஈஸி ஆப் பாங்க்",
+    "aliases": "easy off bang",
+    "id": "product-88"
+  },
+  {
+    "name": "Dettol",
+    "unit": "Packs",
+    "tamil": "டெட்டால்",
+    "aliases": "dettol",
+    "id": "product-89"
+  },
+  {
+    "name": "Phenyl",
+    "unit": "Packs",
+    "tamil": "பினாயில்",
+    "aliases": "pinayil",
+    "id": "product-90"
+  },
+  {
+    "name": "Bleaching powder",
+    "unit": "Packs",
+    "tamil": "ப்ளீச்சிங் பவுடர்",
+    "aliases": "bleaching powder",
+    "id": "product-91"
+  },
+  {
+    "name": "Bathroom acid",
+    "unit": "Packs",
+    "tamil": "பாத்ரூம் அசிட்",
+    "aliases": "bathroom acid",
+    "id": "product-92"
+  },
+  {
+    "name": "Odonil",
+    "unit": "Packs",
+    "tamil": "ஓடோனில்",
+    "aliases": "odonil",
+    "id": "product-93"
+  },
+  {
+    "name": "Hit",
+    "unit": "Packs",
+    "tamil": "ஹிட்",
+    "aliases": "insect spray",
+    "id": "product-94"
+  },
+  {
+    "name": "Room spray",
+    "unit": "Packs",
+    "tamil": "ரூம் ஸ்ப்ரே",
+    "aliases": "air freshener",
+    "id": "product-95"
+  },
+  {
+    "name": "Mezhuguvarthi",
+    "unit": "Packs",
+    "tamil": "மெழுகுவர்த்தி",
+    "aliases": "candles mezhukuvathi",
+    "id": "product-96"
+  },
+  {
+    "name": "Karuppu cover (Kuppai)",
+    "unit": "Packs",
+    "tamil": "கருப்பு கவர் (குப்பை-கழிவு)",
+    "aliases": "garbage bags rubbish",
+    "id": "product-97"
+  },
+  {
+    "name": "Muga powder",
+    "unit": "Packs",
+    "tamil": "பவுடர் (முகத்திற்கு)",
+    "aliases": "face powder talcum",
+    "id": "product-98"
+  },
+  {
+    "name": "All Out coil",
+    "unit": "Packs",
+    "tamil": "ஆல் அவுட் காயில்",
+    "aliases": "mosquito coil",
+    "id": "product-99"
+  },
+  {
+    "name": "Soodam",
+    "unit": "Packs",
+    "tamil": "சூடம்",
+    "aliases": "camphor karpooram",
+    "id": "product-100"
+  },
+  {
+    "name": "Sambrani bathi",
+    "unit": "Packs",
+    "tamil": "சாம்பிராணி பத்தி",
+    "aliases": "incense sambirani",
+    "id": "product-101"
+  }
+];
+
+</script><script>
+(function(){
+ 'use strict';
+ const M=window.GroceryModel,$=id=>document.getElementById(id),money=n=>'₹'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:2}),number=n=>Number(n.toFixed(4)).toLocaleString('en-IN',{maximumFractionDigits:4});
+ const currentMonth=()=>M.today().slice(0,7),previousMonth=()=>M.shiftMonth(currentMonth(),-1),monthLabel=m=>new Intl.DateTimeFormat('en-IN',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z')),shortMonth=m=>new Intl.DateTimeFormat('en-IN',{month:'short',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
+ const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
+ let state=M.empty(window.GROCERY_CATALOG),storageReady=true,selected=null,editingId=null,confirmAction=null,finishing=false;
+ const trash='<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/></svg>';
+ function message(text,error=false){$('message').textContent=text;$('message').className='message'+(error?' error':'')}
+ function commit(next){try{M.save(localStorage,next);state=next;storageReady=true;return true}catch(error){message('Could not save. Your list is unchanged. Check browser storage or export a backup.',true);return false}}
+ function safeCommit(next){if(!storageReady){message('Saving is unavailable. Restore a valid backup or enable browser storage and reload.',true);return false}return commit(next)}
+ try{const raw=localStorage.getItem(M.STORAGE_KEY);if(raw){const old=JSON.parse(raw);state=M.upgrade(old);const kept=M.retained(state);if(old.version!==2||kept.purchases.length!==state.purchases.length)M.save(localStorage,kept);state=kept;if(old.version===1)message('Updated: each entered price now applies to the displayed size. Review old purchases if needed.')}else{localStorage.setItem(M.STORAGE_KEY+'.test','1');localStorage.removeItem(M.STORAGE_KEY+'.test')}}catch(error){storageReady=false;$('storage-note').hidden=false;$('storage-note').textContent='Saved data could not be read or browser storage is unavailable. Existing data will not be overwritten. Export a backup or restore a valid backup.'}
+ function deltaText(node,price,last){node.className='delta';const d=M.delta(price,last);if(!d){node.textContent='';return}node.classList.add(d.value>0?'up':d.value<0?'down':'neutral');node.textContent=Math.abs(d.value)<.000001?'＝ Same price':(d.value>0?'↑ +':'↓ −')+money(Math.abs(d.value))+(d.percent===null?'':' ('+Math.abs(d.percent).toFixed(1)+'%)')}
+ const parsedPrice=input=>input.value.trim()===''?null:Number(input.value);
+ function showReference(){if(!selected){$('last-reference').hidden=true;return}const ref=M.reference(state.purchases,previousMonth(),{productId:selected.id,unit:$('unit').value,weight:Number($('weight').value)});$('last-reference').hidden=!ref||ref.price===null;$('last-reference').textContent=ref?.price!=null?'Last month, same size: '+money(ref.price):''}
+ function applyDefault(){const rule=M.RULES[$('unit').value];$('weight').value=rule.value;$('weight').min=rule.value;$('weight').step=rule.step;showReference()}
+ function choose(p){selected=p;$('product-search').value=p.name;$('unit').value=p.unit;applyDefault();$('suggestions').replaceChildren();$('weight').focus()}
+ function search(){selected=null;showReference();const term=$('product-search').value.trim().toLocaleLowerCase(),box=$('suggestions');box.replaceChildren();if(!term)return;const found=state.catalog.filter(p=>[p.name,p.tamil||'',p.aliases||''].some(x=>x.toLocaleLowerCase().includes(term)));found.slice(0,8).forEach(p=>{const b=el('button','',p.name);b.type='button';b.onclick=()=>choose(p);box.append(b)});if(found.length>8)box.append(el('span','hint',found.length+' matches. Type more.'));if(!state.catalog.some(p=>p.name.toLocaleLowerCase()===term)){const b=el('button','','+ New product: '+$('product-search').value.trim());b.type='button';b.onclick=()=>choose({id:null,name:$('product-search').value.trim(),unit:$('unit').value});box.append(b)}}
+ $('product-search').oninput=search;$('unit').onchange=applyDefault;$('weight').onchange=showReference;
+ for(const [id,d] of [['weight-minus',-1],['weight-plus',1]])$(id).onclick=()=>{const rule=M.RULES[$('unit').value];$('weight').value=Math.max(rule.value,Math.round(((Number($('weight').value)||rule.value)+d*rule.step)*1000)/1000);showReference()};
+ $('add-form').onsubmit=e=>{e.preventDefault();if(!selected){const name=$('product-search').value.trim().toLocaleLowerCase();selected=state.catalog.find(p=>p.name.toLocaleLowerCase()===name);if(!selected){message('Select a product or choose “New product” from the search results.',true);return}}const next=M.copy(state),product={...selected};if(!product.id){product.id=M.id();next.catalog.push(product)}const p={id:M.id(),productId:product.id,name:product.name,weight:Number($('weight').value),qty:Number($('quantity').value),price:parsedPrice($('rate')),unit:$('unit').value,selected:false};if(next.draft.some(x=>M.sizeKey(x)===M.sizeKey(p))){message('This product and size are already in your list. Change its Qty below.',true);return}next.draft.push(p);if(!safeCommit(next))return;selected=null;$('product-search').value='';$('rate').value='';$('quantity').value=1;$('suggestions').replaceChildren();showReference();renderList();message(p.name+' added'+(p.price===null?' without a price.':'.'));$('add-panel').open=false;$('add-toggle').focus()};
+ function updateRow(id,changes){const next=M.copy(state),p=next.draft.find(x=>x.id===id);if(!p)return false;Object.assign(p,changes);return safeCommit(next)}
+ function totals(){const s=M.summary(state.draft);$('list-total').textContent=money(s.total);$('total-label').textContent=s.pending?'Known total':'List total';$('total-note').textContent=s.pending?s.pending+' price'+(s.pending===1?'':'s')+' pending · Total is partial':'Total = price × Qty';$('list-count').textContent=state.draft.length+' items';$('buy').disabled=!state.draft.length||!storageReady;$('list-empty').hidden=!!state.draft.length;$('load-previous').disabled=!state.purchases.some(p=>p.date.startsWith(previousMonth()))}
+ function renderList(){const box=$('shopping-items');box.replaceChildren();state.draft.forEach(p=>{
+ const row=el('div','retail-row'),product=el('div','retail-product'),name=el('button','retail-name',p.name);name.type='button';name.setAttribute('aria-label','Edit '+p.name);name.onclick=()=>openEdit(p.id);
+ const meta=el('div','retail-meta'),size=el('span','retail-size',number(p.weight)+' '+p.unit),priceLabel=el('label','retail-price');priceLabel.append(el('span','','₹'));const price=el('input');price.type='number';price.min=0;price.step='.01';price.value=p.price===null?'':p.price;price.placeholder='Price';price.setAttribute('aria-label','Price for '+p.name+', '+p.weight+' '+p.unit+', optional');priceLabel.append(price);
+ const old=M.reference(state.purchases,previousMonth(),p),previous=el('span','retail-last');meta.append(size,priceLabel,previous);product.append(name,meta);
+ const stepper=el('div','retail-qty'),minus=el('button','','−'),qty=el('input'),plus=el('button','','+');minus.type=plus.type='button';minus.setAttribute('aria-label','Decrease Qty for '+p.name);plus.setAttribute('aria-label','Increase Qty for '+p.name);qty.type='number';qty.min=1;qty.step=1;qty.value=p.qty;qty.setAttribute('aria-label','Qty for '+p.name);stepper.append(minus,qty,plus);
+ const end=el('div','retail-end'),sum=el('strong','retail-amount'),remove=el('button','retail-remove','Remove');remove.type='button';remove.setAttribute('aria-label','Remove '+p.name+' from list');remove.onclick=()=>{const next=M.copy(state);next.draft=next.draft.filter(x=>x.id!==p.id);if(safeCommit(next)){renderList();message(p.name+' removed.')}};end.append(sum,remove);
+ function paint(cost,count){sum.textContent=cost===null?'—':money(cost*count);sum.setAttribute('aria-label',cost===null?'Price pending':'Total '+money(cost*count));const d=M.delta(cost,old?.price);const arrow=d&&Math.abs(d.value)>.000001?(d.value>0?' ↑':' ↓'):'';previous.textContent='Last '+(old?.price!=null?money(old.price):'—')+arrow;previous.className='retail-last'+(arrow?(d.value>0?' up':' down'):'');previous.setAttribute('aria-label','Last month, same size: '+(old?.price!=null?money(old.price):'not available')+(arrow?(d.value>0?'; price increased by ':'; price decreased by ')+money(Math.abs(d.value)):''));}
+ function update(){if(!qty.value||!qty.checkValidity()||!price.checkValidity()){qty.reportValidity();price.reportValidity();return}const count=Number(qty.value),cost=parsedPrice(price);if(updateRow(p.id,{qty:count,price:cost})){paint(cost,count);totals()}else{const saved=state.draft.find(x=>x.id===p.id);qty.value=saved.qty;price.value=saved.price===null?'':saved.price}}
+ price.onchange=qty.onchange=update;minus.onclick=()=>{if(Number(qty.value)>1){qty.value=Number(qty.value)-1;update()}};plus.onclick=()=>{qty.value=(Number(qty.value)||1)+1;update()};row.append(product,stepper,end);box.append(row);paint(p.price,p.qty);
+ });totals()}
+ function openEdit(id){const p=state.draft.find(x=>x.id===id);editingId=id;$('edit-name').value=p.name;$('edit-weight').value=p.weight;$('edit-weight').step='any';$('edit-unit').value=p.unit;$('edit-qty').value=p.qty;$('edit-rate').value=p.price===null?'':p.price;$('edit-error').textContent='';$('edit-dialog').showModal()}
+ $('cancel-edit').onclick=()=>$('edit-dialog').close();$('edit-unit').onchange=()=>{const rule=M.RULES[$('edit-unit').value];$('edit-weight').value=rule.value;$('edit-weight').step=rule.step};$('edit-form').onsubmit=e=>{e.preventDefault();const name=$('edit-name').value.trim();if(!name){$('edit-error').textContent='Enter a product name.';return}const next=M.copy(state),p=next.draft.find(x=>x.id===editingId);if(!p)return;Object.assign(p,{name,unit:$('edit-unit').value,weight:Number($('edit-weight').value),qty:Number($('edit-qty').value),price:parsedPrice($('edit-rate'))});if(next.draft.some(x=>x.id!==p.id&&M.sizeKey(x)===M.sizeKey(p))){$('edit-error').textContent='This product and size already exist in your list.';return}const product=next.catalog.find(x=>x.id===p.productId);if(product){product.name=name;product.unit=p.unit;next.draft.filter(x=>x.productId===p.productId).forEach(x=>x.name=name)}if(safeCommit(next)){$('edit-dialog').close();renderList();message('Item updated.')}};
+ function describe(items){const s=M.summary(items);return money(s.total)+(s.pending?' known · '+s.pending+' price'+(s.pending===1?'':'s')+' pending':'')}
+ $('buy').onclick=()=>{$('shop-name').value='';$('purchase-date').value=M.today();$('purchase-date').max=M.today();$('purchase-date').min=M.shiftMonth(currentMonth(),-5)+'-01';$('buy-description').textContent=state.draft.length+' items · '+describe(state.draft);$('buy-error').textContent='';$('buy-dialog').showModal()};$('cancel-buy').onclick=()=>$('buy-dialog').close();$('buy-form').onsubmit=e=>{e.preventDefault();if(finishing)return;finishing=true;$('finish-buy').disabled=true;try{const result=M.checkout(state,$('shop-name').value,$('purchase-date').value);if(safeCommit(result.state)){$('buy-dialog').close();renderList();renderHistory();message('Purchase saved at '+result.purchase.shop+'. List cleared.')}else $('buy-error').textContent='Could not save. Your list has not been cleared.'}catch(error){$('buy-error').textContent=error.message}finally{finishing=false;$('finish-buy').disabled=false}};
+ $('load-previous').onclick=()=>{const result=M.mergePrevious(state,previousMonth());if(!result.added){message('Last month’s items are already present. Your edits were kept.');return}if(safeCommit(result.state)){renderList();message(result.added+' items loaded. Review the copied prices before buying.')}};
+ function setPage(history){$('list-page').hidden=history;$('history-page').hidden=!history;$('list-tab').removeAttribute('aria-current');$('history-tab').removeAttribute('aria-current');$(history?'history-tab':'list-tab').setAttribute('aria-current','page');if(history)renderHistory();message('')}$('list-tab').onclick=()=>setPage(false);$('history-tab').onclick=()=>setPage(true);
+ function confirm(title,text,action){$('confirm-title').textContent=title;$('confirm-text').textContent=text;confirmAction=action;$('confirm-dialog').showModal()}$('confirm-no').onclick=()=>$('confirm-dialog').close();$('confirm-yes').onclick=()=>{const action=confirmAction;confirmAction=null;$('confirm-dialog').close();action?.()};
+ function renderHistory(){const months=M.months(currentMonth()),box=$('comparison');box.replaceChildren();$('history-range').textContent=monthLabel(months[0])+' – '+monthLabel(months[4]);$('show-shops').checked=state.showShops!==false;$('history-page').classList.toggle('hide-shops',state.showShops===false);const shopsFor=month=>[...new Set(state.purchases.filter(p=>p.date.startsWith(month)).map(p=>p.shop))].join(' · ')||'No purchases';const head=el('div','comparison-grid comparison-head');head.append(el('span','','Product / size'));months.forEach(m=>{const cell=el('div');cell.append(el('strong','',shortMonth(m)),el('small','month-shops',shopsFor(m)));head.append(cell)});box.append(head);const groups=new Map();for(const purchase of state.purchases.filter(p=>months.includes(p.date.slice(0,7))))for(const p of purchase.items)groups.set(M.sizeKey(p),p);$('history-empty').hidden=groups.size>0;
+ for(const p of [...groups.values()].sort((a,b)=>a.name.localeCompare(b.name))){const row=el('div','comparison-grid'),product=el('div','comparison-product',state.catalog.find(x=>x.id===p.productId)?.name||p.name);product.append(el('small','',number(p.weight)+' '+p.unit+' each'));row.append(product);months.forEach(m=>{const cell=el('div','comparison-cell'),label=el('span','mobile-month',monthLabel(m));label.append(el('small','month-shops',shopsFor(m)));cell.append(label);const stats=M.stats(state.purchases,m,p);if(stats){cell.append(el('strong','',stats.price===null?'Price pending':money(stats.price)));const old=M.stats(state.purchases,M.shiftMonth(m,-1),p),d=el('span');deltaText(d,stats.price,old?.price);cell.append(d,el('small','',stats.qty+' bought · '+money(stats.total)+(stats.pending?' known':'')));if(stats.pending)cell.append(el('small','',stats.pending+' Qty price pending'))}else cell.append(el('span','neutral','—'));row.append(cell)});box.append(row)}const oldMonth=$('records-month').value;$('records-month').replaceChildren();[currentMonth(),...months.slice().reverse()].forEach(m=>{const opt=el('option','',monthLabel(m));opt.value=m;$('records-month').append(opt)});if([currentMonth(),...months].includes(oldMonth))$('records-month').value=oldMonth;renderRecords()}
+ function renderRecords(){const box=$('purchase-records');box.replaceChildren();const records=state.purchases.filter(p=>p.date.startsWith($('records-month').value)).sort((a,b)=>b.date.localeCompare(a.date));if(!records.length){box.append(el('p','empty','No purchases for this month.'));return}for(const p of records){const details=el('details','purchase'),summary=el('summary');summary.append(el('strong','',p.date+' · '+describe(p.items)),el('span','month-shops',' · '+p.shop),el('span','',' · '+p.items.length+' items'));const body=el('div','purchase-lines');p.items.forEach(item=>{const line=el('div','purchase-line'),left=el('span','',item.name);left.append(el('small','',item.qty+' × '+number(item.weight)+' '+item.unit+' · '+(item.price===null?'Price pending':money(item.price)+' each')));const right=el('div','record-price'),sum=el('span','',item.price===null?'Price pending':money(M.amount(item))),edit=el('button','edit-item','Edit price');edit.type='button';edit.setAttribute('aria-label','Edit purchase price for '+item.name);edit.onclick=()=>openPurchasePrice(p.id,item.id);right.append(sum,edit);line.append(left,right);body.append(line)});const actions=el('div','purchase-footer'),load=el('button','','Copy to shopping list'),del=el('button','danger','Delete purchase');load.type=del.type='button';load.onclick=()=>copyPurchase(p);del.onclick=()=>confirm('Delete purchase?',p.date+' · '+p.shop+'. This removes this visit from monthly totals.',()=>{const next=M.copy(state);next.purchases=next.purchases.filter(x=>x.id!==p.id);if(safeCommit(next)){renderHistory();renderList();message('Purchase deleted.')}});actions.append(load,del);body.append(actions);details.append(summary,body);box.append(details)}}
+ function copyPurchase(purchase){const next=M.copy(state);let count=0;for(const p of purchase.items){if(next.draft.some(x=>M.sizeKey(x)===M.sizeKey(p)))continue;if(!next.catalog.some(x=>x.id===p.productId))next.catalog.push({id:p.productId,name:p.name,unit:p.unit});next.draft.push({...p,id:M.id(),selected:false});count++}if(safeCommit(next)){renderList();setPage(false);message(count+' items copied. Existing rows were kept.')}}
+ let purchaseEdit=null;function openPurchasePrice(purchaseId,itemId){const p=state.purchases.find(x=>x.id===purchaseId),item=p.items.find(x=>x.id===itemId);purchaseEdit={purchaseId,itemId};$('purchase-price-title').textContent=item.name+' · '+number(item.weight)+' '+item.unit;$('purchase-price').value=item.price===null?'':item.price;$('purchase-price-error').textContent='';$('purchase-price-dialog').showModal()}
+ $('cancel-purchase-price').onclick=()=>$('purchase-price-dialog').close();$('purchase-price-form').onsubmit=e=>{e.preventDefault();const next=M.copy(state),p=next.purchases.find(x=>x.id===purchaseEdit.purchaseId),item=p?.items.find(x=>x.id===purchaseEdit.itemId);if(!item)return;item.price=parsedPrice($('purchase-price'));if(safeCommit(next)){$('purchase-price-dialog').close();renderHistory();renderList();message('Purchase price updated.')}else $('purchase-price-error').textContent='Could not save this price.'};
+ $('records-month').onchange=renderRecords;$('show-shops').onchange=()=>{const next=M.copy(state);next.showShops=$('show-shops').checked;if(safeCommit(next))$('history-page').classList.toggle('hide-shops',!state.showShops);else $('show-shops').checked=state.showShops};
+ $('export').onclick=()=>{const blob=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=el('a');a.href=url;a.download='grocery-backup-'+M.today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);message('Backup exported.')};$('import').onclick=()=>$('import-file').click();$('import-file').onchange=async()=>{const file=$('import-file').files[0];if(!file)return;try{if(file.size>10*1024*1024)throw Error('Choose a backup smaller than 10 MB.');const restored=M.upgrade(JSON.parse(await file.text()));confirm('Restore backup?','This replaces the list and history. Export your current backup first if needed. Old-version prices will be treated as the price for the entered size.',()=>{if(commit(M.retained(restored))){$('storage-note').hidden=true;selected=null;$('product-search').value='';$('suggestions').replaceChildren();showReference();renderList();renderHistory();message('Backup restored.')}})}catch(error){message('Import failed: '+error.message,true)}finally{$('import-file').value=''}};
+ $('current-month').textContent=monthLabel(currentMonth());applyDefault();renderList();renderHistory();
+})();
+
+</script></body></html>
